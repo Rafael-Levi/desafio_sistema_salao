@@ -19,7 +19,6 @@ class AgendamentoTestCase(TestCase):
             inicio=inicio
         )
         with self.assertRaises(Exception):
-            # tenta criar outro com overlap
             Agendamento.objects.create(
                 cliente=self.cliente,
                 servico=self.servico,

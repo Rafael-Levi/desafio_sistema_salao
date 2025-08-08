@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h2>Bem-vindo, {{ request.user.get_username }}</h2>
+<p>Seu usuário ainda não foi associado a um papel funcional. Contate o administrador.</p>
+{% endblock %}

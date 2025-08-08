@@ -99,6 +99,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#Login
+LOGIN_URL = 'agendamentos:login'
+LOGIN_REDIRECT_URL = 'agendamentos:home'
+LOGOUT_REDIRECT_URL = 'agendamentos:login'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/

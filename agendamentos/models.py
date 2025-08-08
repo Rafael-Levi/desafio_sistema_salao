@@ -3,6 +3,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth.models import User
 
 class Cliente(models.Model):
     nome = models.CharField(max_length=100)
@@ -23,10 +24,13 @@ class Servico(models.Model):
 
 
 class Profissional(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='profissional_profile')
     nome = models.CharField(max_length=100)
     especialidade = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
+        if self.user:
+            return f"{self.nome} ({self.user.username})"
         return self.nome
 
 
@@ -68,26 +72,12 @@ class Agendamento(models.Model):
         return self.inicio + timedelta(minutes=dur)
 
     def clean(self):
-        if self.inicio < timezone.now() - timedelta(days=1):
-            # não bloqueia agendamentos no passado
-            pass
-
         if not self.duracao_minutos:
             self.duracao_minutos = self.servico.duracao_minutos
 
         inicio = self.inicio
         fim = self.fim
-
-        overlapping = Agendamento.objects.filter(
-            profissional=self.profissional,
-            status__in=[self.STATUS_AGENDADO, self.STATUS_CONCLUIDO]
-        ).exclude(pk=self.pk).filter(
-            inicio__lt=fim,
-        )
-
-        # Para checar other.fim, calculamos in DB aproximado: other.inicio + Coalesce(other.duracao, servico.duracao)
-        # Simplificação: vamos buscar candidatos por intervalo próximo e depois filtrar em python para exatidão.
-        # pegamos candidatos em um raio de (duracao + 60min) para reduzir o conjunto
+        
         window_start = inicio - timedelta(minutes=240)
         window_end = fim + timedelta(minutes=240)
 
@@ -107,4 +97,3 @@ class Agendamento(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-

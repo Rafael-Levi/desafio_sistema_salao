@@ -1,54 +1,137 @@
+# agendamentos/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
-from .models import Agendamento
+from django.contrib.auth.models import User
+from .models import Agendamento, Profissional, Cliente, Servico
 from .forms import AgendamentoForm
-from django.db.models import Prefetch
-from django.shortcuts import render
-from django import forms
 from .reports import concluido_por_servico
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.http import HttpResponseBadRequest
 
-class AgendamentoListView(ListView):
+def is_recepcionista_or_admin(user):
+    return user.is_superuser or user.groups.filter(name="Recepcionista").exists()
+
+@login_required
+def home(request):
+    user = request.user
+
+    if user.is_superuser or user.groups.filter(name="Dono").exists():
+        return redirect('/admin/')
+
+    if user.groups.filter(name="Recepcionista").exists():
+        agendamentos = Agendamento.objects.select_related('cliente', 'servico', 'profissional').all()
+        return render(request, 'agendamentos/home_recepcionista.html', {'agendamentos': agendamentos})
+
+    if user.groups.filter(name="Profissional").exists():
+        prof = None
+        try:
+            prof = Profissional.objects.get(user=user)
+        except Profissional.DoesNotExist:
+            try:
+                nome = user.get_full_name() or user.username
+                prof = Profissional.objects.get(nome__iexact=nome)
+            except Profissional.DoesNotExist:
+                prof = None
+
+        if prof:
+            agendamentos = Agendamento.objects.select_related('cliente', 'servico').filter(profissional=prof)
+        else:
+            agendamentos = Agendamento.objects.none()
+        return render(request, 'agendamentos/home_profissional.html', {'agendamentos': agendamentos, 'profissional': prof})
+
+    return render(request, 'agendamentos/home_default.html')
+
+
+class AgendamentoListView(LoginRequiredMixin, ListView):
     model = Agendamento
     paginate_by = 20
     template_name = 'agendamentos/agendamento_list.html'
     context_object_name = 'agendamentos'
 
     def get_queryset(self):
-        # use select_related para evitar N+1
         qs = super().get_queryset().select_related('cliente', 'servico', 'profissional')
-        q = self.request.GET.get('q')
-        if q:
-            qs = qs.filter(cliente__nome__icontains=q)
-        return qs
+        user = self.request.user
+
+        if user.is_superuser or user.groups.filter(name='Recepcionista').exists():
+            return qs
+        if user.groups.filter(name='Profissional').exists():
+            try:
+                prof = Profissional.objects.get(user=user)
+            except Profissional.DoesNotExist:
+                try:
+                    prof = Profissional.objects.get(nome__iexact=user.get_full_name() or user.username)
+                except Profissional.DoesNotExist:
+                    return Agendamento.objects.none()
+            return qs.filter(profissional=prof)
+        return Agendamento.objects.none()
 
 
-class AgendamentoCreateView(CreateView):
+class AgendamentoCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'agendamentos.add_agendamento'
     model = Agendamento
     form_class = AgendamentoForm
     template_name = 'agendamentos/agendamento_form.html'
     success_url = reverse_lazy('agendamentos:list')
 
 
-class AgendamentoUpdateView(UpdateView):
+class AgendamentoUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'agendamentos.change_agendamento'
     model = Agendamento
     form_class = AgendamentoForm
     template_name = 'agendamentos/agendamento_form.html'
     success_url = reverse_lazy('agendamentos:list')
 
 
-class AgendamentoDeleteView(DeleteView):
+class AgendamentoDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'agendamentos.delete_agendamento'
     model = Agendamento
     template_name = 'agendamentos/agendamento_confirm_delete.html'
     success_url = reverse_lazy('agendamentos:list')
 
 
-class AgendamentoDetailView(DetailView):
+class AgendamentoDetailView(LoginRequiredMixin, DetailView):
     model = Agendamento
     template_name = 'agendamentos/agendamento_detail.html'
 
 
+@login_required
+def alterar_status_agendamento(request, pk):
+    """
+    Altera o status de um agendamento.
+    - Somente POST é aceito.
+    - Profissional só pode alterar seus próprios agendamentos.
+    - Recepcionista e Admin podem alterar qualquer agendamento.
+    """
+    if request.method != 'POST':
+        return HttpResponseBadRequest("Apenas POST permitido.")
+
+    novo_status = request.POST.get('status')
+    allowed_status = [s[0] for s in Agendamento.STATUS_CHOICES]
+    if novo_status not in allowed_status:
+        return HttpResponseBadRequest("Status inválido.")
+
+    agendamento = get_object_or_404(Agendamento, pk=pk)
+    user = request.user
+
+    if user.groups.filter(name='Profissional').exists():
+        try:
+            prof = Profissional.objects.get(user=user)
+        except Profissional.DoesNotExist:
+            return redirect('agendamentos:home')
+        if agendamento.profissional != prof:
+            return redirect('agendamentos:home')
+
+    agendamento.status = novo_status
+    agendamento.save()
+    return redirect('agendamentos:home')
+
+
+# Relatório
+from django import forms
 class RelatorioForm(forms.Form):
     start = forms.DateField(required=True, widget=forms.DateInput(attrs={'type':'date'}))
     end = forms.DateField(required=True, widget=forms.DateInput(attrs={'type':'date'}))

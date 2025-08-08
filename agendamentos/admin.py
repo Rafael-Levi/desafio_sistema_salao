@@ -16,8 +16,8 @@ class ServicoAdmin(admin.ModelAdmin):
 
 @admin.register(Profissional)
 class ProfissionalAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nome', 'especialidade')
-    search_fields = ('nome', 'especialidade')
+    list_display = ('id', 'nome', 'user', 'especialidade')
+    search_fields = ('nome', 'especialidade', 'user__username')
 
 
 @admin.register(Agendamento)

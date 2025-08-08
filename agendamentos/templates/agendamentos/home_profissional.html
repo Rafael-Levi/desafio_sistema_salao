@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Home - Profissional{% endblock %}
+
+{% block content %}
+<h2>Bem-vindo, {{ request.user.get_username }} (Profissional)</h2>
+
+{% if profissional %}
+  <p>Profissional: {{ profissional.nome }}</p>
+{% endif %}
+
+<table border="1">
+  <thead><tr><th>Cliente</th><th>Serviço</th><th>Início</th><th>Status</th><th>Ações</th></tr></thead>
+  <tbody>
+    {% for ag in agendamentos %}
+    <tr>
+      <td>{{ ag.cliente.nome }}</td>
+      <td>{{ ag.servico.nome }}</td>
+      <td>{{ ag.inicio }}</td>
+      <td>{{ ag.get_status_display }}</td>
+      <td>
+        <!-- Profissional só pode mudar status do próprio agendamento -->
+        <form method="post" action="{% url 'agendamentos:alterar_status_agendamento' ag.pk %}" style="display:inline;">
+          {% csrf_token %}
+          <select name="status">
+            {% for val, label in ag.STATUS_CHOICES %}
+              <option value="{{ val }}" {% if ag.status == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Atualizar</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Nenhum agendamento para você.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

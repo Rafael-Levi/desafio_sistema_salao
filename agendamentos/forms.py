@@ -1,5 +1,6 @@
+# agendamentos/forms.py
 from django import forms
-from .models import Agendamento, Servico, Profissional, Cliente
+from .models import Agendamento
 
 class AgendamentoForm(forms.ModelForm):
     class Meta:
@@ -8,6 +9,3 @@ class AgendamentoForm(forms.ModelForm):
         widgets = {
             'inicio': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Home - Recepcionista{% endblock %}
+
+{% block content %}
+<h2>Bem-vinda, {{ request.user.get_username }} (Recepcionista)</h2>
+
+<p><a href="{% url 'agendamentos:create' %}">Novo Agendamento</a> | <a href="{% url 'agendamentos:list' %}">Ver todos (lista)</a></p>
+
+<table border="1">
+  <thead><tr><th>Cliente</th><th>Serviço</th><th>Profissional</th><th>Início</th><th>Status</th><th>Ações</th></tr></thead>
+  <tbody>
+    {% for ag in agendamentos %}
+    <tr>
+      <td>{{ ag.cliente.nome }}</td>
+      <td>{{ ag.servico.nome }}</td>
+      <td>{{ ag.profissional.nome }}</td>
+      <td>{{ ag.inicio }}</td>
+      <td>{{ ag.get_status_display }}</td>
+      <td>
+        <a href="{% url 'agendamentos:detail' ag.pk %}">Ver</a> |
+        <a href="{% url 'agendamentos:update' ag.pk %}">Editar</a> |
+        <a href="{% url 'agendamentos:delete' ag.pk %}">Excluir</a>
+        <br/>
+        <!-- Formulário rápido para mudar status (Recepcionista/admin) -->
+        <form method="post" action="{% url 'agendamentos:alterar_status_agendamento' ag.pk %}" style="display:inline;">
+          {% csrf_token %}
+          <select name="status">
+            {% for val, label in ag.STATUS_CHOICES %}
+              <option value="{{ val }}" {% if ag.status == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit">Atualizar</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Nenhum agendamento.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
