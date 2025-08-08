@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Agendamento</h2>
+  <p><strong>Cliente:</strong> {{ object.cliente.nome }}</p>
+  <p><strong>Serviço:</strong> {{ object.servico.nome }}</p>
+  <p><strong>Profissional:</strong> {{ object.profissional.nome }}</p>
+  <p><strong>Início:</strong> {{ object.inicio }}</p>
+  <p><strong>Fim:</strong> {{ object.fim }}</p>
+  <p><strong>Status:</strong> {{ object.get_status_display }}</p>
+  <a href="{% url 'agendamentos:update' object.pk %}">Editar</a> |
+  <a href="{% url 'agendamentos:list' %}">Voltar</a>
+{% endblock %}

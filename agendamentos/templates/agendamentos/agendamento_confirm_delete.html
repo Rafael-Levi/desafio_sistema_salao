@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Confirmar exclusão</h2>
+  <p>Deseja realmente excluir o agendamento de {{ object.cliente }} em {{ object.inicio }} ?</p>
+  <form method="post">{% csrf_token %}
+    <button type="submit">Sim, excluir</button>
+    <a href="{% url 'agendamentos:list' %}">Cancelar</a>
+  </form>
+{% endblock %}

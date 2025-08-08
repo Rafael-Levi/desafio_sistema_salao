@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Lista de Agendamentos{% endblock %}
+{% block content %}
+<h2>Agendamentos</h2>
+<a href="{% url 'agendamentos:create' %}">Novo agendamento</a>
+<form method="get">
+  <input type="text" name="q" placeholder="Buscar cliente..." value="{{ request.GET.q }}">
+  <button type="submit">Buscar</button>
+</form>
+<table>
+  <thead>
+    <tr><th>Cliente</th><th>Serviço</th><th>Profissional</th><th>Início</th><th>Status</th><th>Ações</th></tr>
+  </thead>
+  <tbody>
+    {% for a in agendamentos %}
+    <tr>
+      <td>{{ a.cliente.nome }}</td>
+      <td>{{ a.servico.nome }}</td>
+      <td>{{ a.profissional.nome }}</td>
+      <td>{{ a.inicio }}</td>
+      <td>{{ a.get_status_display }}</td>
+      <td>
+        <a href="{% url 'agendamentos:detail' a.pk %}">Ver</a> |
+        <a href="{% url 'agendamentos:update' a.pk %}">Editar</a> |
+        <a href="{% url 'agendamentos:delete' a.pk %}">Excluir</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Nenhum agendamento encontrado.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if is_paginated %}
+  <div>
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">Anterior</a>{% endif %}
+    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Próxima</a>{% endif %}
+  </div>
+{% endif %}
+{% endblock %}

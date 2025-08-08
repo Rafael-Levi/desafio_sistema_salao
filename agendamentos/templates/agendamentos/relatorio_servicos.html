@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Relatório - Serviços Concluídos</h2>
+  <form method="get">
+    {{ form.as_p }}
+    <button type="submit">Gerar relatório</button>
+  </form>
+
+  <h3>Resultados</h3>
+  <table>
+    <thead><tr><th>Serviço</th><th>Total Concluídos</th></tr></thead>
+    <tbody>
+      {% for row in data %}
+      <tr><td>{{ row.servico__nome }}</td><td>{{ row.total }}</td></tr>
+      {% empty %}
+      <tr><td colspan="2">Nenhum resultado</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

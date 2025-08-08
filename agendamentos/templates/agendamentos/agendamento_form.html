@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>{% if object %}Editar{% else %}Novo{% endif %} Agendamento</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Salvar</button>
+    <a href="{% url 'agendamentos:list' %}">Cancelar</a>
+  </form>
+{% endblock %}

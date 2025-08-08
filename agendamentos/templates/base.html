@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Salão - {% block title %}{% endblock %}</title>
+</head>
+<body>
+  <header>
+    <h1>Salão - Sistema de Agendamentos</h1>
+    <nav>
+      <a href="{% url 'agendamentos:list' %}">Agendamentos</a> |
+      <a href="/admin/">Admin</a>
+    </nav>
+    <hr/>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
