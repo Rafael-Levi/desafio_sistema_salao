@@ -26,4 +26,9 @@ urlpatterns = [
 
     # relatório
     path('relatorio/servicos/', relatorio_servicos, name='relatorio_servicos'),
+
+    # clientes
+    path('clientes/', views.clientes_list, name='clientes_list'),
+    path('clientes/novo/', views.cliente_create, name='cliente_create'),
+    path('clientes/<int:pk>/editar/', views.cliente_edit, name='cliente_edit'),
 ]

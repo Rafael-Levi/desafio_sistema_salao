@@ -1,16 +1,49 @@
 # agendamentos/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from .models import Agendamento, Profissional, Cliente, Servico
-from .forms import AgendamentoForm
+from .forms import AgendamentoForm, ClienteForm
 from .reports import concluido_por_servico
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpResponseBadRequest
+
+
+@login_required
+@permission_required('agendamentos.add_cliente', raise_exception=True)
+def cliente_create(request):
+    if request.method == 'POST':
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('agendamentos:clientes_list')
+    else:
+        form = ClienteForm()
+    return render(request, 'agendamentos/cliente_form.html', {'form': form, 'title': 'Adicionar Cliente'})
+
+@login_required
+@permission_required('agendamentos.change_cliente', raise_exception=True)
+def cliente_edit(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            return redirect('clientes_list')
+    else:
+        form = ClienteForm(instance=cliente)
+    return render(request, 'agendamentos/cliente_form.html', {'form': form, 'title': 'Editar Cliente'})
+
+@login_required
+@permission_required('agendamentos.view_cliente', raise_exception=True)
+def clientes_list(request):
+    clientes = Cliente.objects.all()
+    return render(request, 'agendamentos/clientes_list.html', {'clientes': clientes})
+
 
 def is_recepcionista_or_admin(user):
     return user.is_superuser or user.groups.filter(name="Recepcionista").exists()

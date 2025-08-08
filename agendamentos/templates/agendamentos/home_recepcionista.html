@@ -4,7 +4,7 @@
 {% block content %}
 <h2>Bem-vinda, {{ request.user.get_username }} (Recepcionista)</h2>
 
-<p><a href="{% url 'agendamentos:create' %}">Novo Agendamento</a> | <a href="{% url 'agendamentos:list' %}">Ver todos (lista)</a></p>
+<p><a href="{% url 'agendamentos:create' %}">Novo Agendamento</a> | <a href="{% url 'agendamentos:list' %}">Ver todos (lista)</a> | <a href="{% url 'agendamentos:clientes_list' %}">Gerenciar Clientes</a></p>
 
 <table border="1">
   <thead><tr><th>Cliente</th><th>Serviço</th><th>Profissional</th><th>Início</th><th>Status</th><th>Ações</th></tr></thead>

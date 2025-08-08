@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Lista de Clientes</h2>
+<a href="{% url 'agendamentos:cliente_create' %}">Adicionar Cliente</a>
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Telefone</th>
+        <th>Email</th>
+        <th>Ações</th>
+    </tr>
+    {% for cliente in clientes %}
+    <tr>
+        <td>{{ cliente.nome }}</td>
+        <td>{{ cliente.telefone }}</td>
+        <td>{{ cliente.email }}</td>
+        <td>
+            <a href="{% url 'agendamentos:cliente_edit' cliente.pk %}">Editar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
