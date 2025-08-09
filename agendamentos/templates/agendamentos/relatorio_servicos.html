@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h2>Relatório - Serviços Concluídos</h2>
-  <form method="get">
-    {{ form.as_p }}
-    <button type="submit">Gerar relatório</button>
+  <h2 class="mb-4">Relatório - Serviços Concluídos</h2>
+
+  <form method="get" class="mb-4">
+    <div class="card card-body shadow-sm">
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Gerar relatório</button>
+    </div>
   </form>
 
   <h3>Resultados</h3>
-  <table>
-    <thead><tr><th>Serviço</th><th>Total Concluídos</th></tr></thead>
-    <tbody>
-      {% for row in data %}
-      <tr><td>{{ row.servico__nome }}</td><td>{{ row.total }}</td></tr>
-      {% empty %}
-      <tr><td colspan="2">Nenhum resultado</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr><th>Serviço</th><th>Total Concluídos</th></tr>
+      </thead>
+      <tbody>
+        {% for row in data %}
+        <tr><td>{{ row.servico__nome }}</td><td>{{ row.total }}</td></tr>
+        {% empty %}
+        <tr><td colspan="2" class="text-center">Nenhum resultado</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}

@@ -1,12 +1,49 @@
 {% extends 'base.html' %}
+
 {% block content %}
-  <h2>Agendamento</h2>
-  <p><strong>Cliente:</strong> {{ object.cliente.nome }}</p>
-  <p><strong>Serviço:</strong> {{ object.servico.nome }}</p>
-  <p><strong>Profissional:</strong> {{ object.profissional.nome }}</p>
-  <p><strong>Início:</strong> {{ object.inicio }}</p>
-  <p><strong>Fim:</strong> {{ object.fim }}</p>
-  <p><strong>Status:</strong> {{ object.get_status_display }}</p>
-  <a href="{% url 'agendamentos:update' object.pk %}">Editar</a> |
-  <a href="{% url 'agendamentos:list' %}">Voltar</a>
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">
+                <i class="bi bi-calendar-event"></i> Detalhes do Agendamento
+            </h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Cliente:</dt>
+                <dd class="col-sm-9">{{ object.cliente.nome }}</dd>
+
+                <dt class="col-sm-3">Serviço:</dt>
+                <dd class="col-sm-9">{{ object.servico.nome }}</dd>
+
+                <dt class="col-sm-3">Profissional:</dt>
+                <dd class="col-sm-9">{{ object.profissional.nome }}</dd>
+
+                <dt class="col-sm-3">Início:</dt>
+                <dd class="col-sm-9">{{ object.inicio }}</dd>
+
+                <dt class="col-sm-3">Fim:</dt>
+                <dd class="col-sm-9">{{ object.fim }}</dd>
+
+                <dt class="col-sm-3">Status:</dt>
+                <dd class="col-sm-9">
+                    <span class="badge {% if object.get_status_display == 'Concluído' %}bg-success{% elif object.get_status_display == 'Cancelado' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                        {{ object.get_status_display }}
+                    </span>
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'agendamentos:list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+            <a href="{% url 'agendamentos:update' object.pk %}" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 {% endblock %}
