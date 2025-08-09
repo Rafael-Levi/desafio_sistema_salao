@@ -2,12 +2,22 @@
 {% block content %}
   <h2 class="mb-4">Relatório - Serviços Concluídos</h2>
 
-  <form method="get" class="mb-4">
-    <div class="card card-body shadow-sm">
-      {{ form.as_p }}
+  <form method="get" class="row g-2">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="col-auto">
       <button type="submit" class="btn btn-primary">Gerar relatório</button>
     </div>
   </form>
+
+  {% if request.GET.start and request.GET.end %}
+  <div class="mt-3">
+    <a href="{% url 'agendamentos:relatorio_servicos_download' %}?start={{ request.GET.start }}&end={{ request.GET.end }}" class="btn btn-success">
+      <i class="bi bi-download"></i> Baixar relatório (Excel)
+    </a>
+  </div>
+  {% endif %}
+
 
   <h3>Resultados</h3>
   <div class="table-responsive">

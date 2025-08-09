@@ -2,7 +2,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from .views import relatorio_servicos
 
 app_name = 'agendamentos'
 
@@ -25,8 +24,9 @@ urlpatterns = [
     path('agendamento/<int:pk>/status/', views.alterar_status_agendamento, name='alterar_status_agendamento'),
 
     # relatório
-    path('relatorio/servicos/', relatorio_servicos, name='relatorio_servicos'),
-
+    path('relatorio/servicos/', views.relatorio_servicos, name='relatorio_servicos'),
+    path('relatorio/servicos/download/', views.relatorio_servicos_download, name='relatorio_servicos_download'),
+    
     # clientes
     path('clientes/', views.clientes_list, name='clientes_list'),
     path('clientes/novo/', views.cliente_create, name='cliente_create'),
