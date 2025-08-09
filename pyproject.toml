@@ -11,8 +11,14 @@ python = "^3.12"
 django = "^5.2.5"
 pandas = "^2.3.1"
 openpyxl = "^3.1.5"
+taskipy = "^1.14.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.taskipy.tasks]
+init_db = "python manage.py makemigrations && python manage.py migrate"
+criar_admin = "python manage.py createsuperuser"
+run = "python manage.py runserver"
