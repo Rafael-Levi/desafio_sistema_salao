@@ -12,16 +12,15 @@
 
   {% if request.GET.start and request.GET.end %}
   <div class="mt-3">
-    <a href="{% url 'agendamentos:relatorio_servicos_download' %}?start={{ request.GET.start }}&end={{ request.GET.end }}" class="btn btn-success">
+    <a href="{% url 'relatorios:relatorio_servicos_download' %}?start={{ request.GET.start }}&end={{ request.GET.end }}" class="btn btn-success">
       <i class="bi bi-download"></i> Baixar relatório (Excel)
     </a>
-    <div class="mt-3">
+  </br>
     <a href="https://dashbord-relatorio-salao.streamlit.app/" target="_blank" class="link-dashbord">
       <i class="bi bi-dashbord"></i> Link para acessar o Dashbord (insira o arquivo baixado)
     </a>
   </div>
   {% endif %}
-
 
   <h3>Resultados</h3>
   <div class="table-responsive">

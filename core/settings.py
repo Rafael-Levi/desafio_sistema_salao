@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'agendamentos',
+    'salao',
 ]
 
 MIDDLEWARE = [
@@ -100,9 +100,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 #Login
-LOGIN_URL = 'agendamentos:login'
+LOGIN_URL = 'login:login'
 LOGIN_REDIRECT_URL = 'agendamentos:home'
-LOGOUT_REDIRECT_URL = 'agendamentos:login'
+LOGOUT_REDIRECT_URL = 'login:logout'
 
 
 # Internationalization

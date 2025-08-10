@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group, User
-from agendamentos.models import Profissional
+from salao.models.agendamento import Profissional
 
 class Command(BaseCommand):
     help = 'Sincroniza grupos Profissional e cria objetos Profissional para usuários no grupo Profissional (se necessário)'
