@@ -1,6 +1,4 @@
 from django.db.models import Count
-from django.utils import timezone
-from datetime import datetime
 
 def concluido_por_servico(queryset, start_dt, end_dt):
     """

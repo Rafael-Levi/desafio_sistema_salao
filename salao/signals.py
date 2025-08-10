@@ -1,13 +1,11 @@
-# agendamentos/signals.py
 from django.contrib.auth.models import Group, Permission, User
 from django.db.models.signals import post_migrate, post_save
 from django.dispatch import receiver
-from django.contrib.contenttypes.models import ContentType
-from .models import Agendamento, Cliente, Servico, Profissional
+from .models.profissional import Profissional
 
 @receiver(post_migrate)
 def criar_grupos_e_permissoes(sender, **kwargs):
-    if sender.name != 'agendamentos':
+    if sender.name != 'salao':
         return
 
     dono_group, _ = Group.objects.get_or_create(name='Dono')
@@ -17,7 +15,6 @@ def criar_grupos_e_permissoes(sender, **kwargs):
     codes_recepc = [
         'add_agendamento','change_agendamento','delete_agendamento','view_agendamento',
         'add_cliente','change_cliente','delete_cliente','view_cliente',
-        'add_servico','change_servico','delete_servico','view_servico',
     ]
     recep_perms = Permission.objects.filter(codename__in=codes_recepc)
     recep_group.permissions.set(recep_perms)

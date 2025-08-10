@@ -1,38 +1,9 @@
-# agendamentos/models.py
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.utils import timezone
 from datetime import timedelta
-from django.contrib.auth.models import User
-
-class Cliente(models.Model):
-    nome = models.CharField(max_length=100)
-    telefone = models.CharField(max_length=20, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-
-    def __str__(self):
-        return self.nome
-
-
-class Servico(models.Model):
-    nome = models.CharField(max_length=100)
-    duracao_minutos = models.PositiveIntegerField(default=60)  # duração padrão
-    preco = models.DecimalField(max_digits=8, decimal_places=2)
-
-    def __str__(self):
-        return self.nome
-
-
-class Profissional(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='profissional_profile')
-    nome = models.CharField(max_length=100)
-    especialidade = models.CharField(max_length=100, blank=True, null=True)
-
-    def __str__(self):
-        if self.user:
-            return f"{self.nome} ({self.user.username})"
-        return self.nome
-
+from .cliente import Cliente
+from .servico import Servico
+from .profissional import Profissional
 
 class Agendamento(models.Model):
     STATUS_AGENDADO = 'AGENDADO'
