@@ -75,10 +75,10 @@ graph TD
     end
 ```
 ## ⚙️ Funcionalidades
-- **CRUD** de Agendamentos, Clientes, Serviços, Usuários e Profissionais (restrito ao admin)
+- **CRUD** Serviços, Usuários e Profissionais (restrito ao admin)
 - Página inicial adaptada ao perfil do usuário:
   - **Profissional:** apenas seus agendamentos
-  - **Recepcionista:** todos os agendamentos
+  - **Recepcionista:** Gerenciar agendamentos e clientes
 - Controle de permissões via grupos:
   - **Dono (admin)**
   - **Profissional**
@@ -113,7 +113,7 @@ graph TD
 - Filtrados por período e status
 - Exportação para Excel (detalhado)
 - Link para aplicação de dashboard interativo com insights
-
+[Link aplicação](https://dashbord-relatorio-salao.streamlit.app/)
 **Otimizações:**
 - `values().annotate(Count('id'))` → GROUP BY no banco
 - Índices em `inicio` e `status` → filtros instantâneos
