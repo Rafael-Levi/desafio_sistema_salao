@@ -57,7 +57,7 @@
             <a href="{% url 'agendamentos:home' %}">Home</a>
             <a href="{% url 'agendamentos:list' %}">Lista Agendamentos</a>
             <a href="{% url 'relatorios:relatorio_servicos' %}">Relatório</a>
-            <a href="{% url 'login:login' %}">Sair</a>
+            <a href="{% url 'login:logout' %}">Sair</a>
           {% else %}
             <a href="{% url 'login:login' %}">Entrar</a>
           {% endif %}
